@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARAMİLER YARIŞIYOR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #121212;
+            color: #ffffff;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+            background-color: #1f1f1f;
+            padding: 2% 1%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 85%;
+            max-width: 70%;
+            height: 75%;
+            overflow-y: hidden;
+        }
+        .title {
+            font-size: 2.5vw;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #9c27b0; /* Başlık rengi mor */
+        }
+        .question {
+            margin-bottom: 2%;
+            font-size: 2vw;
+        }
+        .choices {
+            margin-top: 3%;
+            text-align: left;
+            font-size: 1.8vw;
+        }
+        .choice {
+            padding: 1% 3%;
+            background-color: #333333;
+            margin: 0.8% 0;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .progress-bar {
+            width: 45%;
+            background-color: #444444;
+            border-radius: 4px;
+            height: 0.7vw;
+            margin-left: 2%;
+            display: none;
+        }
+        .progress {
+            height: 100%;
+            background-color: #9c27b0; /* Yüzde çubuğu rengi mor */
+            width: 0%;
+            border-radius: 4px;
+        }
+        .percentage {
+            font-size: 1.4vw;
+            color: white; /* Yüzde rengi beyaz */
+            visibility: hidden;
+        }
+        #next-btn {
+            margin-top: 4%;
+            padding: 1.5% 4%;
+            background: linear-gradient(45deg, #9c27b0, #ba68c8); /* Buton rengi mor */
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.8vw;
+            transition: all 0.3s ease;
+        }
+        #next-btn:hover {
+            background: linear-gradient(45deg, #8e24aa, #ab47bc); /* Hover durumu mor tonları */
+            transform: scale(1.05);
+        }
+        .choice span:first-child {
+            font-weight: bold;
+        }
+        .completed-message {
+            font-size: 2vw;
+            color: #9c27b0;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">HARAMİLER YARIŞIYOR</div>
+
+    <div class="container">
+        <div id="question-container"></div>
+        <button id="next-btn" onclick="nextQuestion()">Sıradaki Soru</button>
+        <div id="completed-message" class="completed-message" style="display: none;">Yarışma bitti.</div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Soru 1: Türk dizisi deyince aklınıza ilk gelen dizi?",
+                choices: [
+                    { text: "Aşkı memnu", progress: 46 },
+                    { text: "Muhteşem Yüzyıl", progress: 21 },
+                    { text: "Kurtlar Vadisi", progress: 10 },
+                    { text: "Cennet Mahallesi", progress: 9 },
+                    { text: "Kızılcık şerbeti", progress: 8 },
+                    { text: "Yaprak Dökümü", progress: 6 }
+                ]
+            },
+            {
+                question: "Soru 2: Türkiye’nin gelmiş geçmiş en yakışıklı erkeği",
+                choices: [
+                    { text: "Mustafa Kemal Atatürk", progress: 73 },
+                    { text: "Mert Yazıcıoğlu", progress: 8 },
+                    { text: "Barış Alper Yılmaz", progress: 6 },
+                    { text: "Kıvanç Tatlıtuğ", progress: 5 },
+                    { text: "Çağatay Ulusoy", progress: 4 },
+                    { text: "Kenan Yıldız", progress: 3}
+                ]
+            },
+            {
+                question: "Soru 3: Türk mutfağındaki en iyi yemek?",
+                choices: [
+                    { text: "Yaprak sarma", progress: 36 },
+                    { text: "Mantı", progress: 17 },
+                    { text: "İskender Kebap", progress: 15 },
+                    { text: "Lahmacun", progress: 12 },
+                    { text: "Kayseri Yağlaması", progress: 11 },
+                    { text: "Çiğköfte", progress: 9 }
+                ]
+            },
+            {
+                question: "Soru 4: En unutulmaz Türk televizyonu dizi karakteri?",
+                choices: [
+                    { text: "Baş Haseki Hürrem Sultan Hazretleri", progress: 50 },
+                    { text: "Bihter Yöreoğlu Ziyagil", progress: 29 },
+                    { text: "Burhan Altıntop", progress: 9 },
+                    { text: "Eyşan Tezcan", progress: 5 },
+                    { text: "Feriha Yılmaz Sarrafoğlu", progress: 4 },
+                    { text: "Pembe Erdağ", progress: 3 }
+                ]
+            },
+            {
+                question: "Soru 5: Türkiye’nin gelmiş geçmiş en iyi gündüz kuşağı programı",
+                choices: [
+                    { text: "Müge Anlı ile Tatlı Sert", progress: 56 },
+                    { text: "Sabah Sabah Seda Sayan", progress: 15 },
+                    { text: "Doya Doya Moda", progress: 10 },
+                    { text: "Kısmetse Olur", progress: 8 },
+                    { text: "Yemekteyiz", progress: 6 },
+                    { text: "Temizlik Benim İşim", progress: 5 }
+                ]
+            },
+            {
+                question: "Soru 6: Beğendiğim cinste ilk .... 'ya bakarım",
+                choices: [
+                    { text: "Pqueen seviyor mu?", progress: 37 },
+                    { text: "Karakterine", progress: 21 },
+                    { text: "Mizah anlayışına", progress: 16 },
+                    { text: "Giyim tarzına", progress: 10 },
+                    { text: "Dış görüşüne", progress: 9 },
+                    { text: "🙂", progress: 7 }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        // Klavye tuşlarıyla şıkları açmak için event listener
+        document.addEventListener("keydown", function(event) {
+            if (event.key >= 1 && event.key <= 6) {
+                revealChoice(event.key - 1); // Klavye 1-6 tuşlarına basınca ilgili şık gösterilir
+            }
+        });
+
+        function renderQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            const questionData = questions[currentQuestionIndex];
+
+            questionContainer.innerHTML = `
+                <div class="question">${questionData.question}</div>
+                <div class="choices">
+                    ${questionData.choices.map((choice, index) => {
+                        return `
+                            <div class="choice" id="choice-${index}" style="display: flex;">
+                                <span>${index + 1}.</span>
+                                <span id="choice-text-${index}" style="visibility: hidden; color: white;">${choice.text}</span>
+                                <div class="progress-bar" id="progress-bar-${index}">
+                                    <div class="progress" id="progress-${index}" style="width: 0%;"></div>
+                                </div>
+                                <span class="percentage" id="percentage-${index}" style="visibility: hidden; color: white;">${choice.progress}%</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function revealChoice(index) {
+            const choiceText = document.getElementById(`choice-text-${index}`);
+            const progressBar = document.getElementById(`progress-bar-${index}`);
+            const progress = document.getElementById(`progress-${index}`);
+            const percentage = document.getElementById(`percentage-${index}`);
+            
+            // Şık metnini, yüzdeyi ve ilerleme çubuğunu göster
+            choiceText.style.visibility = 'visible';
+            percentage.style.visibility = 'visible';
+            progressBar.style.display = 'inline-block';
+            progress.style.width = `${questions[currentQuestionIndex].choices[index].progress}%`;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                // Test bittiğinde "Test Tamamlandı!" mesajını göster
+                document.getElementById('completed-message').style.display = 'block';
+                document.getElementById('next-btn').style.display = 'none'; // Next butonunu gizle
+                document.getElementById('question-container').style.display = 'none'; // Soruları gizle
+            }
+        }
+
+        // Sayfa yüklendiğinde ilk soruyu göster
+        window.onload = function() {
+            renderQuestion();
+        };
+    </script>
+</body>
+</html>
